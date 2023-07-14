@@ -1,35 +1,16 @@
-# r6-match-data
+# R6-match-data
+A tool for converting match replay files to useful statistics.  
+Frontend : Vercel  
+Backend : Firebase Functions  
+Database : Firestore  
 
-this will be a tool integrating the r6-dissect tool (written in Go) with Google Cloud Platform services, so that we can store data from match replays and analyse it
 
-# Commit prefixes
+# Nuxt Deployment instructions
 
-[Add] Adding a feature.  
-[Update] Updating a feature.  
-[Fix] Fixing a bug.  
-[Style] Fixing style.  
-[Refactor] Refactoring code.  
-[Remove] Removing features/files.  
-[Docs] All things documentation.  
-[Other] If it doesn't fit in any category, it ends up here.
-
-## Front End Plans
-
-- Visualization via AG Grid
-  - Use Firebase functions to retrieve data
-- Upload match replay via website or Google Drive
-
-## Back End Plans
-
-- Hierarchical store of events/rounds/games/series/tournaments
-- Mutable player/operator/map info
-
-## Nuxt Deploy Guide
-
-Deploy to Vercel by pushing code.
+Deploy by pushing code.
 Look at the [Nuxt 3 documentation](https://v3.nuxtjs.org) to learn more.
 
-### Setup
+## Setup
 
 Make sure to install the dependencies:
 
@@ -37,7 +18,7 @@ Make sure to install the dependencies:
 yarn
 ```
 
-### Development Server
+## Development Server
 
 Start the development server on http://localhost:3000
 
@@ -45,7 +26,7 @@ Start the development server on http://localhost:3000
 yarn run dev
 ```
 
-### Production
+## Production
 
 Build the application for production:
 

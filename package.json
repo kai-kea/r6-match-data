@@ -1,4 +1,5 @@
 {
+  "name": "nuxt-app",
   "private": true,
   "scripts": {
     "build": "nuxt build",
@@ -8,7 +9,9 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
-    "nuxt": "^3.0.0"
+    "@nuxt/devtools": "latest",
+    "@types/node": "^18.16.19",
+    "nuxt": "^3.6.2"
   },
   "dependencies": {
     "ag-grid-community": "^30.0.3",

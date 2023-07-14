@@ -1,6 +1,4 @@
-export default {
-  nitro: {
-    preset: "vercel-edge",
-  },
-  plugins: ["@/plugins/firebase.js"],
-};
+// https://nuxt.com/docs/api/configuration/nuxt-config
+export default defineNuxtConfig({
+  devtools: { enabled: true }
+})
