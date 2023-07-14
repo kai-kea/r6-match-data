@@ -2,6 +2,17 @@
 
 this will be a tool integrating the r6-dissect tool (written in Go) with Google Cloud Platform services, so that we can store data from match replays and analyse it
 
+# Commit prefixes
+
+[Add] Adding a feature.  
+[Update] Updating a feature.  
+[Fix] Fixing a bug.  
+[Style] Fixing style.  
+[Refactor] Refactoring code.  
+[Remove] Removing features/files.  
+[Docs] All things documentation.  
+[Other] If it doesn't fit in any category, it ends up here.
+
 ## Front End Plans
 
 - Visualization via AG Grid
