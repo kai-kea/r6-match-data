@@ -18,12 +18,21 @@ Make sure to install the dependencies:
 yarn
 ```
 
+Alternatively, for npm:
+```bash
+npm install
+```
+
 ## Development Server
 
 Start the development server on http://localhost:3000
 
 ```bash
 yarn run dev
+```
+
+```bash
+npm run dev -- -o
 ```
 
 ## Production
