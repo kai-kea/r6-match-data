@@ -52,4 +52,4 @@ yarn run preview
 Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/presets) for more information.
 
 ## Commits Style
-Using [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) and [SemVer](https://semver.org/) for versioning.
+Using [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) and [SemVer](https://semver.org/) for versioning. Using commitlint to test for this formatting.
