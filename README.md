@@ -5,12 +5,12 @@ Frontend : Vercel
 Backend : Firebase Functions  
 Database : Firestore
 
-# Nuxt Deployment instructions
+## Nuxt Deployment instructions
 
 Deploy by pushing code.
 Look at the [Nuxt 3 documentation](https://v3.nuxtjs.org) to learn more.
 
-## Setup
+### Setup
 
 Make sure to install the dependencies:
 
@@ -24,7 +24,7 @@ Alternatively, for npm:
 npm install
 ```
 
-## Development Server
+### Development Server
 
 Start the development server on http://localhost:3000
 
@@ -36,7 +36,7 @@ yarn run dev
 npm run dev -- -o
 ```
 
-## Production
+### Production
 
 Build the application for production:
 
@@ -51,3 +51,6 @@ yarn run preview
 ```
 
 Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/presets) for more information.
+
+## Commits Style
+Using [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) and [SemVer](https://semver.org/) for versioning.
