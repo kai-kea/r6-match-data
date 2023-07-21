@@ -1,9 +1,9 @@
 # R6-match-data
+
 A tool for converting match replay files to useful statistics.  
 Frontend : Vercel  
 Backend : Firebase Functions  
-Database : Firestore  
-
+Database : Firestore
 
 # Nuxt Deployment instructions
 
@@ -19,6 +19,7 @@ yarn
 ```
 
 Alternatively, for npm:
+
 ```bash
 npm install
 ```
