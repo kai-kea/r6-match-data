@@ -1,5 +1,5 @@
 const express = require("express");
-const fs = require("fs");
+const fs = require("fs-extra");
 const unzipper = require("unzipper");
 const Firestore = require("@google-cloud/firestore");
 const execSync = require("child_process").execSync;
@@ -43,6 +43,29 @@ app.post("/process-file", async (req, res) => {
   fs.createReadStream(tempFilePath)
     .pipe(unzipper.Extract({ path: matchFilePath }))
     .on("close", async () => {
+      // Check if there's only one directory inside matchFilePath
+      const files = fs.readdirSync(matchFilePath);
+      if (
+        files.length === 1 &&
+        fs.lstatSync(path.join(matchFilePath, files[0])).isDirectory()
+      ) {
+        const folderPath = path.join(matchFilePath, files[0]);
+        const folderFiles = fs.readdirSync(folderPath);
+
+        // Move all .rec files from the folder to matchFilePath
+        for (const file of folderFiles) {
+          if (path.extname(file) === ".rec") {
+            await fs.move(
+              path.join(folderPath, file),
+              path.join(matchFilePath, file)
+            );
+          }
+        }
+
+        // Remove the now empty folder
+        await fs.remove(folderPath);
+      }
+
       // Execute the r6-dissect command and read the output JSON file
       execSync(
         "./r6-dissect " + matchFilePath + " -x " + matchFilePath + "/match.json"
@@ -75,12 +98,28 @@ app.post("/process-file", async (req, res) => {
         });
 
         // Create Firestore documents
-        const promises = stats.map((player) =>
-          db
+        const promises = stats.map(async (player) => {
+          const docRef = db
             .collection("Players")
-            .doc(usernameToProfileID[player.username])
-            .set(player)
-        );
+            .doc(usernameToProfileID[player.username]);
+          const doc = await docRef.get();
+          if (doc.exists) {
+            // If document exists, add old numeric data to new data
+            const oldData = doc.data();
+            for (const key in oldData) {
+              if (
+                typeof oldData[key] === "number" &&
+                typeof player[key] === "number"
+              ) {
+                player[key] += oldData[key];
+              }
+            }
+            return docRef.set(player);
+          } else {
+            // If document does not exist, create new document with new data
+            return docRef.set(player);
+          }
+        });
 
         try {
           await Promise.all(promises);
