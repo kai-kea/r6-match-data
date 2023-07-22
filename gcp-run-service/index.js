@@ -123,6 +123,8 @@ app.post("/process-file", async (req, res) => {
 
         try {
           await Promise.all(promises);
+          // Delete the file from the google cloud storage bucket
+          await file.delete();
           res.send("File processed successfully");
         } catch (err) {
           console.error("Error writing to Firestore: ", err);
