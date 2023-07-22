@@ -46,6 +46,7 @@ export default {
         DisplayName: player.username,
         kills: player.kills,
         deaths: player.deaths,
+        killDeath: useRatio(player.kills, player.deaths).value, 
         assists: player.assists,
         HSPercentage: (
           Math.round((player.headshots * 10000) / player.kills) / 100
@@ -72,6 +73,7 @@ export default {
         { headerName: "Name", field: "DisplayName" },
         { headerName: "Kills", field: "kills" },
         { headerName: "Deaths", field: "deaths" },
+        { headerName: 'K/D', field: 'killDeath'},
         { headerName: "Assists", field: "assists" },
         { headerName: "Headshot %", field: "HSPercentage" },
         { headerName: "Headshots", field: "headshots" },
