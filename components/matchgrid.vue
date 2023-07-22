@@ -43,12 +43,15 @@ export default {
     // reformat player data
     const convertToRowData = (players) => {
       return players.map((player) => ({
-        DisplayName: player.DisplayName,
-        kills: player.Lifetime.Kills,
-        deaths: player.Lifetime.Deaths,
-        assists: player.Lifetime.Assists,
-        KOST: player.Lifetime.KOST,
-        clutches: player.Lifetime["1vX"],
+        DisplayName: player.username,
+        kills: player.kills,
+        deaths: player.deaths,
+        assists: player.assists,
+        HSPercentage: (
+          Math.round((player.headshots * 10000) / player.kills) / 100
+        ).toFixed(2),
+        headshots: player.headshots,
+        rounds: player.rounds,
       }));
     };
 
@@ -70,8 +73,9 @@ export default {
         { headerName: "Kills", field: "kills" },
         { headerName: "Deaths", field: "deaths" },
         { headerName: "Assists", field: "assists" },
-        { headerName: "KOST", field: "KOST" },
-        { headerName: "1vX", field: "clutches" },
+        { headerName: "Headshot %", field: "HSPercentage" },
+        { headerName: "Headshots", field: "headshots" },
+        { headerName: "Rounds", field: "rounds" },
       ],
     };
   },
