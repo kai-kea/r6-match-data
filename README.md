@@ -1,16 +1,17 @@
 # R6 Match Data
 A tool that converts match replay files into useful data and allows users to explore that data dynamically.
 
-Our frontend uses Nuxt and is deployed with Vercel. The backend uses various Google Cloud Platform services, with Firestore as our Database.
+Our frontend uses [Nuxt](https://v3.nuxtjs.org) and is deployed with Vercel. The backend uses various Google Cloud Platform (GCP) services, with Firestore as our database.
 
-## Nuxt Deployment instructions
+## Deployment Info
 
-Deploy by pushing code.
-Look at the [Nuxt 3 documentation](https://v3.nuxtjs.org) to learn more.
+### Frontend
+Code in the `app` directory is deployed by Vercel to https://r6-match-data-dev.vercel.app/ when code is pushed to `main`.
 
-### Setup
+Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/presets) for more information.
 
-Make sure to install the dependencies:
+### Backend
+Backend code in the `svc` directory is currently deployed to GCP manually.
 
 ```bash
 yarn
