@@ -13,42 +13,22 @@ Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/prese
 ### Backend
 Backend code in the `svc` directory is currently deployed to GCP manually.
 
-```bash
-yarn
-```
+## Dev Setup
 
-Alternatively, for npm:
+Install dependencies:
 ```bash
 npm install
 ```
 
-### Development Server
-
 Start the development server on http://localhost:3000
-
 ```bash
-yarn run dev
-```
-
-```bash
-npm run dev -- -o
-```
-
-### Production
-
-Build the application for production:
-
-```bash
-yarn run build
+npm run dev
 ```
 
 Locally preview production build:
-
 ```bash
-yarn run preview
+npm run preview
 ```
 
-Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/presets) for more information.
-
-## Commits Style
-Using [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) and [SemVer](https://semver.org/) for versioning. Using commitlint to test for this formatting.
+## Style
+Using [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) and [SemVer](https://semver.org/) for versioning (although our API is not public). Using commitlint to test for this formatting.
