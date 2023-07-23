@@ -1,9 +1,7 @@
-# R6-match-data
-A tool for converting match replay files to useful statistics.  
-Frontend : Vercel  
-Backend : Firebase Functions  
-Database : Firestore  
+# R6 Match Data
+A tool that converts match replay files into useful data and allows users to explore that data dynamically.
 
+Our frontend uses Nuxt and is deployed with Vercel. The backend uses various Google Cloud Platform services, with Firestore as our Database.
 
 ## Nuxt Deployment instructions
 
