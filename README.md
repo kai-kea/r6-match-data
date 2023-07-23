@@ -1,55 +1,34 @@
-# R6-match-data
-A tool for converting match replay files to useful statistics.  
-Frontend : Vercel  
-Backend : Firebase Functions  
-Database : Firestore  
+# R6 Match Data
+A tool that converts match replay files into useful data and allows users to explore that data dynamically.
 
+Our frontend uses [Nuxt](https://v3.nuxtjs.org) and is deployed with Vercel. The backend uses various Google Cloud Platform (GCP) services, with Firestore as our database.
 
-## Nuxt Deployment instructions
+## Deployment Info
 
-Deploy by pushing code.
-Look at the [Nuxt 3 documentation](https://v3.nuxtjs.org) to learn more.
+### Frontend
+Code in the `app` directory is deployed by Vercel to https://r6-match-data-dev.vercel.app/ when code is pushed to `main`.
 
-### Setup
+Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/presets) for more information.
 
-Make sure to install the dependencies:
+### Backend
+Backend code in the `svc` directory is currently deployed to GCP manually.
 
-```bash
-yarn
-```
+## Dev Setup
 
-Alternatively, for npm:
+Install dependencies:
 ```bash
 npm install
 ```
 
-### Development Server
-
 Start the development server on http://localhost:3000
-
 ```bash
-yarn run dev
-```
-
-```bash
-npm run dev -- -o
-```
-
-### Production
-
-Build the application for production:
-
-```bash
-yarn run build
+npm run dev
 ```
 
 Locally preview production build:
-
 ```bash
-yarn run preview
+npm run preview
 ```
 
-Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/presets) for more information.
-
-## Commits Style
-Using [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) and [SemVer](https://semver.org/) for versioning. Using commitlint to test for this formatting.
+## Style
+Using [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) and [SemVer](https://semver.org/) for versioning (although our API is not public). Using commitlint to test for this formatting.

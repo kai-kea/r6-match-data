@@ -59,3 +59,4 @@ export default {
   },
 };
 </script>
+../src/plugins/firebase.js
