@@ -85,8 +85,7 @@ app.post("/process-file", async (req, res) => {
         );
         const json = JSON.parse(data);
 
-        // Extract the "stats" section
-        const stats = json.stats;
+        const matchID = json.rounds[0].matchID;
 
         // Extract the first round's "players" section
         const firstRoundPlayers = json.rounds[0].players;
@@ -96,42 +95,42 @@ app.post("/process-file", async (req, res) => {
         firstRoundPlayers.forEach((player) => {
           usernameToProfileID[player.username] = player.profileID;
         });
-
-        // Create Firestore documents
-        const promises = stats.map(async (player) => {
-          const docRef = db
-            .collection("Players")
-            .doc(usernameToProfileID[player.username]);
-          const doc = await docRef.get();
-          if (doc.exists) {
-            // If document exists, add old numeric data to new data
-            const oldData = doc.data();
-            for (const key in oldData) {
-              if (
-                typeof oldData[key] === "number" &&
-                typeof player[key] === "number"
-              ) {
-                player[key] += oldData[key];
-              }
-            }
-            return docRef.set(player);
-          } else {
-            // If document does not exist, create new document with new data
-            return docRef.set(player);
-          }
+        // Modify stats array to include profileID
+        json.stats.forEach((playerStats) => {
+          playerStats.profileID = usernameToProfileID[playerStats.username];
         });
 
-        try {
-          await Promise.all(promises);
+        // Create Firestore document for match if it doesn't exist
+        const matchDocRef = db.collection("matches").doc(matchID);
+        const matchDoc = await matchDocRef.get();
+        if (!matchDoc.exists) {
+          // Write match data
+          await matchDocRef.set({
+            matchID: matchID,
+            map: json.rounds[0].map,
+            timestamp: json.rounds[0].timestamp,
+            TeamA: json.rounds[0].teams[0].name,
+            TeamB: json.rounds[0].teams[1].name,
+            stats: json.stats,
+          });
+
+          // Write round data
+          for (let i = 0; i < json.rounds.length; i++) {
+            const roundID = `${matchID}-${i}`;
+            const roundRef = matchDocRef.collection("rounds").doc(roundID);
+            await roundRef.set(json.rounds[i]);
+          }
+
           // Delete the file from the google cloud storage bucket
           await file.delete();
           res.send("File processed successfully");
-        } catch (err) {
-          console.error("Error writing to Firestore: ", err);
-          res.status(500).send("Error processing file");
+        } else {
+          console.log("Document already exists, exiting without overwriting.");
+          res.send("Document already exists");
         }
       } catch (err) {
         console.error(err);
+        res.status(500).send("Error processing file");
       }
     });
 });
