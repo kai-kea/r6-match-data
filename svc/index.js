@@ -8,6 +8,7 @@ const { Storage } = require("@google-cloud/storage");
 const storage = new Storage();
 const path = require("path");
 const os = require("os");
+const { v4: uuidv4 } = require("uuid");
 
 const app = express();
 
@@ -39,7 +40,7 @@ app.post("/process-file", async (req, res) => {
   await file.download({ destination: tempFilePath });
 
   // Process file
-  const matchFilePath = "matches";
+  const matchFilePath = `matches-${uuidv4()}`;
   fs.createReadStream(tempFilePath)
     .pipe(unzipper.Extract({ path: matchFilePath }))
     .on("close", async () => {
@@ -67,23 +68,57 @@ app.post("/process-file", async (req, res) => {
       }
 
       // Execute the r6-dissect command and read the output JSON file
+      const matchFileName = "match-dissect.json";
       execSync(
-        "./r6-dissect " + matchFilePath + " -x " + matchFilePath + "/match.json"
+        "./r6-dissect " +
+          matchFilePath +
+          " -x " +
+          matchFilePath +
+          "/" +
+          matchFileName
       );
+
       // debug to see what files are here
       console.log("Checking matches directory: " + matchFilePath);
       fs.readdirSync(matchFilePath).forEach((file) => {
         console.log(file);
       });
-      console.log("I really hope matches.json is in here.");
 
       // Read json
       try {
         const data = fs.readFileSync(
-          path.join(matchFilePath, "match.json"),
+          path.join(matchFilePath, matchFileName),
           "utf8"
         );
+
         const json = JSON.parse(data);
+
+        // clean up files
+        try {
+          // Delete the file from the google cloud storage bucket
+          await file.delete();
+          console.log(`Removed Google Cloud Storage file`);
+        } catch (err) {
+          console.error(`Failed to remove Google Cloud Storage file`);
+        }
+        try {
+          // Delete temp file within run service
+          await fs.remove(tempFilePath);
+          console.log(`Removed file at ${tempFilePath}.`);
+        } catch (err) {
+          console.error(
+            `Failed to remove file at ${tempFilePath}. Reason: ${err.message}`
+          );
+        }
+        try {
+          // Delete r6-dissect directory
+          await fs.remove(matchFilePath);
+          console.log(`Removed directory at ${matchFilePath}.`);
+        } catch (err) {
+          console.error(
+            `Failed to remove directory at ${matchFilePath}. Reason: ${err.message}`
+          );
+        }
 
         const matchID = json.rounds[0].matchID;
 
@@ -100,8 +135,56 @@ app.post("/process-file", async (req, res) => {
           playerStats.profileID = usernameToProfileID[playerStats.username];
         });
 
+        for (let player of firstRoundPlayers) {
+          const playerDocRef = db.collection("Players").doc(player.profileID);
+
+          // Extract player stats where stats.username matches player.username
+          const playerStats = json.stats.find(
+            (stat) => stat.username === player.username
+          );
+
+          // Check if player document exists
+          const playerDoc = await playerDocRef.get();
+          if (!playerDoc.exists) {
+            // If the player document doesn't exist, create it
+            await playerDocRef.set({
+              username: player.username, // Add the username
+            });
+          }
+
+          // Create or update data maps for the player using a transaction
+          await db.runTransaction(async (transaction) => {
+            const currentData = await transaction.get(playerDocRef);
+            let updateData = {};
+
+            // Iterate over each data point in the playerStats
+            for (let key in playerStats) {
+              // If the key is not username, profileID, or headshotPercentage, process it
+              if (
+                key !== "username" &&
+                key !== "profileID" &&
+                key !== "headshotPercentage"
+              ) {
+                const dataPointPath = `${key}.${matchID}`; // e.g. "kills.match1234"
+
+                // Check if this specific data point for the current matchID already exists
+                if (!currentData.get(dataPointPath)) {
+                  updateData[dataPointPath] = playerStats[key];
+
+                  // Calculate the sum for the data point only if the data point for this matchID is not already present
+                  const currentSum = currentData.get(`${key}Sum`) || 0;
+                  updateData[`${key}Sum`] = currentSum + playerStats[key];
+                }
+              }
+            }
+
+            // Update the player document with the data points and their sums
+            transaction.update(playerDocRef, updateData);
+          });
+        }
+
         // Create Firestore document for match if it doesn't exist
-        const matchDocRef = db.collection("matches").doc(matchID);
+        const matchDocRef = db.collection("Matches").doc(matchID);
         const matchDoc = await matchDocRef.get();
         if (!matchDoc.exists) {
           // Write match data
@@ -121,11 +204,10 @@ app.post("/process-file", async (req, res) => {
             await roundRef.set(json.rounds[i]);
           }
 
-          // Delete the file from the google cloud storage bucket
-          await file.delete();
           res.send("File processed successfully");
         } else {
           console.log("Document already exists, exiting without overwriting.");
+          console.log(matchID);
           res.send("Document already exists");
         }
       } catch (err) {
