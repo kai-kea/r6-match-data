@@ -1,18 +1,22 @@
 <template>
   <div>
-    <input v-model="fileName" type="text" placeholder="Enter file name" />
     <input type="file" accept=".zip" @change="processFile" />
+    <div v-if="uploading">
+      <p>{{ progress }}% uploaded</p>
+    </div>
   </div>
 </template>
 
 <script>
+import { v4 as uuidv4 } from "uuid"; // To generate random UUIDs
 import { getStorage, ref, uploadBytesResumable } from "firebase/storage";
 import { app } from "../plugins/firebase.js";
 
 export default {
   data() {
     return {
-      fileName: "",
+      uploading: false,
+      progress: 0,
     };
   },
   methods: {
@@ -20,20 +24,27 @@ export default {
       const file = event.target.files[0];
       if (file && /\.(zip)$/i.test(file.name)) {
         const storage = getStorage(app);
-        const storageRef = ref(storage, this.fileName + ".zip");
-        const uploadName = this.fileName + ".zip";
+
+        // Generate a UUID for the file name
+        const uploadName = uuidv4() + ".zip";
+        const storageRef = ref(storage, uploadName);
+
         try {
           const uploadTask = uploadBytesResumable(storageRef, file);
+          this.uploading = true;
+
           uploadTask.on(
             "state_changed",
             (snapshot) => {
-              // You can use this to show upload progress
-              const progress =
-                (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-              console.log("Upload is " + progress + "% done");
+              // Show upload progress
+              this.progress = (
+                (snapshot.bytesTransferred / snapshot.totalBytes) *
+                100
+              ).toFixed(2);
             },
             (error) => {
               console.error("Error uploading file: ", error);
+              this.uploading = false;
             },
             () => {
               console.log("File uploaded successfully");
@@ -44,9 +55,10 @@ export default {
                   headers: {
                     "Content-Type": "application/json",
                   },
-                  body: JSON.stringify({ uploadName }),
+                  body: JSON.stringify({ uploadName: uploadName }),
                 }
               );
+              this.uploading = false;
             }
           );
         } catch (error) {

@@ -1,6 +1,6 @@
 <template>
   <ag-grid-vue
-    style="width: 100%; height: 600px"
+    style="width: 100%; height: calc(100vh - 120px)"
     class="ag-theme-alpine"
     :columnDefs="columnDefs"
     :rowData="rowData.value"
@@ -44,14 +44,15 @@ export default {
     const convertToRowData = (players) => {
       return players.map((player) => ({
         DisplayName: player.username,
-        kills: player.kills,
-        deaths: player.deaths,
-        assists: player.assists,
-        HSPercentage: (
-          Math.round((player.headshots * 10000) / player.kills) / 100
-        ).toFixed(2),
-        headshots: player.headshots,
-        rounds: player.rounds,
+        KD: (player.killsSum / player.deathsSum).toFixed(2),
+        kills: player.killsSum,
+        deaths: player.deathsSum,
+        assists: player.assistsSum,
+        HSPercentage: ((player.headshotsSum * 100) / player.killsSum).toFixed(
+          2
+        ),
+        headshots: player.headshotsSum,
+        rounds: player.roundsSum,
       }));
     };
 
@@ -69,13 +70,62 @@ export default {
       rowData,
       columnDefs: [
         // column definitions for the grid
-        { headerName: "Name", field: "DisplayName" },
-        { headerName: "Kills", field: "kills" },
-        { headerName: "Deaths", field: "deaths" },
-        { headerName: "Assists", field: "assists" },
-        { headerName: "Headshot %", field: "HSPercentage" },
-        { headerName: "Headshots", field: "headshots" },
-        { headerName: "Rounds", field: "rounds" },
+        {
+          headerName: "Name",
+          field: "DisplayName",
+          sortable: true,
+          flex: 1,
+          filter: true,
+        },
+        {
+          headerName: "K/D",
+          field: "KD",
+          sortable: true,
+          flex: 1,
+          filter: true,
+        },
+        {
+          headerName: "Kills",
+          field: "kills",
+          sortable: true,
+          flex: 1,
+          filter: true,
+        },
+        {
+          headerName: "Deaths",
+          field: "deaths",
+          sortable: true,
+          flex: 1,
+          filter: true,
+        },
+        {
+          headerName: "Assists",
+          field: "assists",
+          sortable: true,
+          flex: 1,
+          filter: true,
+        },
+        {
+          headerName: "Headshot %",
+          field: "HSPercentage",
+          sortable: true,
+          flex: 1,
+          filter: true,
+        },
+        {
+          headerName: "Headshots",
+          field: "headshots",
+          sortable: true,
+          flex: 1,
+          filter: true,
+        },
+        {
+          headerName: "Rounds",
+          field: "rounds",
+          sortable: true,
+          flex: 1,
+          filter: true,
+        },
       ],
     };
   },
