@@ -17,6 +17,7 @@
     "ag-grid-community": "^30.0.5",
     "ag-grid-vue3": "^30.0.5",
     "firebase": "^10.1.0",
+    "uuid": "^9.0.1",
     "vue-upload-component": "^2.8.23"
   }
 }

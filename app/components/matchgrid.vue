@@ -1,6 +1,6 @@
 <template>
   <ag-grid-vue
-    style="width: 100%; height: 700px"
+    style="width: 100%; height: calc(100vh - 120px)"
     class="ag-theme-alpine"
     :columnDefs="columnDefs"
     :rowData="rowData.value"
